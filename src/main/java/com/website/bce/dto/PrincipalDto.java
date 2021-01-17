@@ -1,6 +1,6 @@
-package com.website.bce.dtos;
+package com.website.bce.dto;
 
-public class Contact {
+public class PrincipalDto {
     private String name;
     private String email;
     private String subject;
