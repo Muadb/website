@@ -3,6 +3,7 @@ package com.website.bce.controller;
 import com.website.bce.dto.PrincipalDto;
 
 import com.website.bce.service.PrincipalService;
+import com.website.bce.service.VisitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +18,12 @@ public class ApplicationController {
     @Autowired
     PrincipalService principalService;
 
+    @Autowired
+    VisitorService visitorService;
+
     @GetMapping("/")
-    public String index() {
+    public String index(HttpServletRequest request) {
+        visitorService.visitorClientInfo(request);
         return "index";
     }
 
