@@ -10,11 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Date;
+import java.util.TimeZone;
 
 @Service
 public class VisitorService {
@@ -27,17 +29,33 @@ public class VisitorService {
     public void visitorClientInfo(HttpServletRequest request) {
         File database = new File("/root/GeoLite2-City.mmdb");
         String visitorIp = request.getRemoteAddr();
-        CityResponse response = null;
+
+        CityResponse response;
+        String country = null;
+        String city = null;
+        String postal = null;
+        String state = null;
+        String os = null;
+        String ip = null;
+
         try {
             DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
             InetAddress inetAddress = InetAddress.getByName(visitorIp);
             response = dbReader.city(inetAddress);
-            LOGGER.info(response.toJson());
+            country = response.getCountry().getName();
+            city = response.getCity().getName();
+            postal = response.getPostal().getCode();
+            state = response.getLeastSpecificSubdivision().getName();
+            os = request.getHeader(HEADER_USERAGENT);
+            ip = request.getRemoteAddr();
         } catch (IOException | GeoIp2Exception e) {
             e.printStackTrace();
         }
 
-        Visitor visitor = new Visitor(response.getCountry().getName(), response.getCity().getName(), response.getPostal().getCode(), response.getLeastSpecificSubdivision().getName(), new Date().toString(), request.getHeader(HEADER_USERAGENT), request.getRemoteAddr());
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+        Visitor visitor = new Visitor(country, city, postal, state, date.toString(), os, ip);
         visitorDao.save(visitor);
+        LOGGER.info("[Visitor] - IP: " + ip + ", Country: " + country + ", City: " + city + ", Postal: " + postal + ", OS: ", os);
     }
 }
