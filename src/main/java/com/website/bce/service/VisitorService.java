@@ -23,10 +23,13 @@ import java.util.TimeZone;
 @Service
 public class VisitorService {
     private static final String HEADER_USERAGENT = "user-agent";
-    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorService.class);
 
     @Autowired
     VisitorDao visitorDao;
+
+    @Autowired
+    EmailService emailService;
 
     @Value("${geolib.path}")
     private String geolib;
@@ -59,7 +62,12 @@ public class VisitorService {
             Date date = new Date();
             Visitor visitor = new Visitor(country, city, postal, state, date.toString(), os, ip);
             visitorDao.save(visitor);
-            LOGGER.info("[Visitor] - IP: " + ip + ", Country: " + country + ", City: " + city + ", Postal: " + postal + ", OS: ", os);
+            String emailMessage = "[Visitor] - IP: " + ip + ", Country: " + country + ", City: " + city + ", Postal: " + postal + ", OS: " + os;
+            LOGGER.info(emailMessage);
+
+            //if (country.equals("Turkey")) {
+            //    emailService.sendEmailToMe(message);
+            //}
 
         } catch (IOException | GeoIp2Exception e) {
             e.printStackTrace();
