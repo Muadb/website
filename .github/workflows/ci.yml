@@ -10,7 +10,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
@@ -34,7 +34,7 @@ jobs:
   
   build:
     needs: analyze
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     
@@ -57,7 +57,7 @@ jobs:
 
   scan:
     needs: build
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: azure/container-scan@v0
       with:
