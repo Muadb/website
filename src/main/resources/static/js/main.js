@@ -323,7 +323,7 @@
     $('#contact .contact-section .contact-form').on('submit', function(event) {
       var form = $(this);
       var submitBtn = form.find('#contact-submit');
-      var submitBtnText = submitBtn.text();
+      var submitBtnText = encodeURI(submitBtn.text());
       var feedbackEl = form.find('.contact-feedback');
       event.preventDefault();
       // Waiting for the response from the server
