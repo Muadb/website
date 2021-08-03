@@ -1,6 +1,7 @@
 package com.website.bce.service;
 
-import com.website.bce.Application;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.website.bce.dto.SmtpConfDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 @Service
@@ -16,16 +19,23 @@ public class EmailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
     public void sendEmailToMe(String message) {
+        ObjectMapper mapper = new ObjectMapper();
+        SmtpConfDto smtpConfDto = null;
+        try {
+            smtpConfDto = mapper.readValue(new File("/resource/smtpConf.json"), SmtpConfDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException("SmtpConfDto configuration file cannot be found", e);
+        }
         Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", "smtp.gmail.com");
+        properties.setProperty("mail.smtp.host", smtpConfDto.getSmtpService());
         properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        properties.setProperty("mail.smtp.port", "465");
-        properties.setProperty("mail.smtp.socketFactory.port", "465");
+        properties.setProperty("mail.smtp.port", smtpConfDto.getSmtpPort());
+        properties.setProperty("mail.smtp.socketFactory.port", smtpConfDto.getSmtpPort());
         properties.put("mail.smtp.auth", "true");
         //properties.put("mail.debug", "true");
 
-        final String username = "barkancanerdogdu@gmail.com";//
-        final String password = "xvgstchdbmivhyjv";
+        final String username = smtpConfDto.getUsername();
+        final String password = smtpConfDto.getPasswd();
 
         Session session = Session.getDefaultInstance(properties,
                 new Authenticator() {
