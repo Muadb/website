@@ -8,7 +8,7 @@ on:
     branches: [ main ]
 
 jobs:
-  analyze:
+  sourcecode-analyze:
     name: Analyze
     runs-on: ubuntu-latest
 
@@ -32,8 +32,8 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
   
-  build:
-    needs: analyze
+  project-build:
+    needs: sourcecode-analyze
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -55,8 +55,8 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-  scan:
-    needs: build
+  container-scan:
+    needs: project-build
     runs-on: ubuntu-latest
     steps:
     - uses: azure/container-scan@v0
