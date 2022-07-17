@@ -1,4 +1,4 @@
-FROM openjdk:18-alpine
+FROM openjdk:17-alpine
 RUN mkdir -p app/logs
 RUN mkdir -p app/geolite2
 RUN mkdir -p app/data
