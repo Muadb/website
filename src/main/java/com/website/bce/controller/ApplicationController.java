@@ -3,6 +3,8 @@ package com.website.bce.controller;
 import com.website.bce.dto.PrincipalDto;
 import com.website.bce.service.PrincipalService;
 import com.website.bce.service.VisitorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ApplicationController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
 
     @Autowired
     PrincipalService principalService;
@@ -20,6 +23,7 @@ public class ApplicationController {
 
     @GetMapping("/")
     public String index(HttpServletRequest request) {
+        LOGGER.info("visitor");
         visitorService.visitorClientInfo(request);
         return "index";
     }

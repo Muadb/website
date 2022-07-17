@@ -38,7 +38,7 @@ public class VisitorService {
         File database = new File(geolib);
         String visitorIp = request.getRemoteAddr();
 
-        CityResponse response;
+        CityResponse response = null;
         String country = null;
         String city = null;
         String postal = null;
@@ -50,11 +50,18 @@ public class VisitorService {
             DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
             InetAddress inetAddress = InetAddress.getByName(visitorIp);
             response = dbReader.city(inetAddress);
+        } catch (IOException | GeoIp2Exception e) {
+            e.printStackTrace();
+        }
 
+        try {
             country = response.getCountry().getName();
             city = response.getCity().getName();
             postal = response.getPostal().getCode();
             state = response.getLeastSpecificSubdivision().getName();
+        } catch (NullPointerException e) {
+        e.printStackTrace();
+    }
             os = request.getHeader(HEADER_USERAGENT);
             ip = request.getRemoteAddr();
 
@@ -69,8 +76,6 @@ public class VisitorService {
             //    emailService.sendEmailToMe(message);
             //}
 
-        } catch (IOException | GeoIp2Exception e) {
-            e.printStackTrace();
-        }
+
     }
 }

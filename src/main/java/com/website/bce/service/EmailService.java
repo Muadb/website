@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.website.bce.dto.SmtpConfDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -18,29 +19,33 @@ public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
+    @Value("${app.username}")
+    private String USERNAME;
+
+    @Value("${app.password}")
+    private String PASSWORD;
+
     public void sendEmailToMe(String message) {
         ObjectMapper mapper = new ObjectMapper();
         SmtpConfDto smtpConfDto = null;
-        try {
-            smtpConfDto = mapper.readValue(new File("/resource/smtpConf.json"), SmtpConfDto.class);
-        } catch (IOException e) {
-            throw new RuntimeException("SmtpConfDto configuration file cannot be found", e);
-        }
+//        try {
+//            smtpConfDto = mapper.readValue(new File("/resource/smtpConf.json"), SmtpConfDto.class);
+//        } catch (IOException e) {
+//            throw new RuntimeException("SmtpConfDto configuration file cannot be found", e);
+//        }
         Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", smtpConfDto.getSmtpService());
+        properties.setProperty("mail.smtp.host", "smtp.gmail.com");
         properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        properties.setProperty("mail.smtp.port", smtpConfDto.getSmtpPort());
-        properties.setProperty("mail.smtp.socketFactory.port", smtpConfDto.getSmtpPort());
+        properties.setProperty("mail.smtp.port", "465");
+        properties.setProperty("mail.smtp.socketFactory.port", "465");
         properties.put("mail.smtp.auth", "true");
-        //properties.put("mail.debug", "true");
-
-        final String username = smtpConfDto.getUsername();
-        final String password = smtpConfDto.getPasswd();
+        properties.put("mail.smtp.ssl", "true");
+        properties.put("mail.debug", "true");
 
         Session session = Session.getDefaultInstance(properties,
                 new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(USERNAME, PASSWORD);
                     }
                 });
 
@@ -54,7 +59,7 @@ public class EmailService {
             Transport.send(mimeMessage);
             LOGGER.info("Sent email to barkancanerdogdu@icloud.com successfully....");
         } catch (MessagingException mex) {
-            mex.printStackTrace();
+            throw new RuntimeException("Mail cannot be sent", mex);
         }
     }
 }
