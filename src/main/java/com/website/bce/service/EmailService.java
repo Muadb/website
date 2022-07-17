@@ -26,13 +26,6 @@ public class EmailService {
     private String PASSWORD;
 
     public void sendEmailToMe(String message) {
-        ObjectMapper mapper = new ObjectMapper();
-        SmtpConfDto smtpConfDto = null;
-//        try {
-//            smtpConfDto = mapper.readValue(new File("/resource/smtpConf.json"), SmtpConfDto.class);
-//        } catch (IOException e) {
-//            throw new RuntimeException("SmtpConfDto configuration file cannot be found", e);
-//        }
         Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", "smtp.gmail.com");
         properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");

@@ -51,7 +51,7 @@ public class VisitorService {
             InetAddress inetAddress = InetAddress.getByName(visitorIp);
             response = dbReader.city(inetAddress);
         } catch (IOException | GeoIp2Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Visitor information cannot be resolved");
         }
 
         try {
@@ -60,7 +60,7 @@ public class VisitorService {
             postal = response.getPostal().getCode();
             state = response.getLeastSpecificSubdivision().getName();
         } catch (NullPointerException e) {
-        e.printStackTrace();
+        throw new RuntimeException("Response from dbreader is NULL");
     }
             os = request.getHeader(HEADER_USERAGENT);
             ip = request.getRemoteAddr();
