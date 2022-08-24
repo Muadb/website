@@ -58,6 +58,12 @@
             <version>1.6.2</version>
         </dependency>
         <!-- email -->
+             
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-root</artifactId>
+            <version>2.10.9.2</version>
+        </dependency>
         
     </dependencies>
 
